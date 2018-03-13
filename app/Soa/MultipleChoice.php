@@ -1,25 +1,35 @@
 <?php
 
-require_once 'Item.php';
+namespace App\Soa;
+
+use App\Soa\Item;
+use App\Soa\helpers;
+use Faker;
+use DomDocument;
+
 require_once 'helpers.php';
 
-class MultipleChoice extends Item {
+class MultipleChoice {
 
-    function MultipleChoice($selectType) {
-        $this->xml = new Item;
+    function MultipleChoice() {}
+
+    public function generate($selectType) {
+        
+        header("content-type: application/xml; UTF-8");
+        
         if ($selectType == 'multi') {
-            $this->entitySubtype = 'multi-select';
+            $entitySubtype = 'multi-select';
         } else {
-            $this->entitySubtype = 'single-select';
-        }    
-    }
+            $entitySubtype = 'single-select';
+        } 
 
-    public function generate() {
-        $faker = Faker\Factory::create();
+        $xml = new Item();
         $item = new DOMDocument();
-        $item->loadXML($this->xml->generate());
-        $assessment_items = $item->getElementsByTagName('cars:assessment-item');
-        $assessment_items[0]->setAttribute('entity-subtype',$this->entitySubtype);
+        $item->loadXML($xml->generate());
+        $faker = Faker\Factory::create();
+        $assessment_items = $item->getElementsByTagNameNS("http://www.cengage.com/CARS/2","assessment");
+        $assessment_item = $assessment_items->item(0);
+        $assessment_item->setAttribute('entity-subtype','yadda');
         $multiple_choice = $item->createElement('cars:multiple-choice');
         $multiple_choice->setAttribute('cgi',generateCGI());
 
@@ -30,7 +40,7 @@ class MultipleChoice extends Item {
         $multiple_choice->appendChild($prompt);
 
         // single- and multi-select
-        if ($this->entitySubtype == 'multi-select') {
+        if ($entitySubtype == 'multi-select') {
             $selectionElement = 'cars:multi-select';
         } else {    // single-select
             $selectionElement = 'cars:single-select';
@@ -41,7 +51,7 @@ class MultipleChoice extends Item {
         $multiple_choice->appendChild($select);
         
         // single- and multi-select
-        if ($this->entitySubtype == 'multi-select') {
+        if ($entitySubtype == 'multi-select') {
             $numCorrect = rand(2,5);
             $numIncorrect = rand(1,5);
             for ($i = 0; $i < $numCorrect; $i++) {
@@ -100,12 +110,10 @@ class MultipleChoice extends Item {
         }
 
         // append cars:multiple-choice to cars:assessment-item
-        $assessment_items[0]->appendChild($multiple_choice);
+        // $item->appendChild($multiple_choice);
+        $assessment_item->appendChild($multiple_choice);
         $item->formatOutput = true;
         return $item->saveXML();
-
-
-  
     }
 
 }

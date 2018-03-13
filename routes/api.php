@@ -16,3 +16,9 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+// Route::get('multi-select', function() {
+//     return response(['Yadda','Bosco','Van Delay'],200);
+// });
+
+Route::get('multi-select','MultipleChoiceController@generateItem');

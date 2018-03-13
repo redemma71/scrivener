@@ -7,7 +7,7 @@ class Item {
 
     function Item() {
         $faker = Faker\Factory::create();
-        $this->title = $faker->sentence(2);
+        $this->title = $faker->lexify('Multiple Select ????');
         $this->entityType = "assessment-item";
         $this->schemaVersion = "2.15";
         $this->entityVersion = "1.0";
