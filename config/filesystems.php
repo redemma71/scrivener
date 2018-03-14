@@ -64,6 +64,11 @@ return [
             'url' => env('AWS_URL'),
         ],
 
+        'soa' => [
+            'driver' => 'local',
+            'root'   => storage_path().'/soa',
+        ],
+
     ],
 
 ];

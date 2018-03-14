@@ -3,6 +3,7 @@ namespace App\Soa;
 use App\Soa\MultipleChoice;
 use App\Soa\Item;
 use DOMDocument;
+use Storage;
 
 class Test {
 
@@ -13,29 +14,21 @@ class Test {
 
     public function generateItem() {
        
-        // $test = new Item();
-        // $item = new DOMDocument();
-        // $item->loadXML($test->generate());
-        // echo $item->saveXML();
-
-        $msXML = new MultipleChoice();
-        $msItem = $msXML->generate('multi');
-        print $msItem;
-
-        // $iMax = 4;
-        // $jMax = 4;
+        $iMax = 4;
+        $jMax = 4;
+        $storagePath = Storage::disk('soa')->getDriver()->getAdapter()->getPathPrefix();
     
-        // for ($i = 0; $i < $iMax; $i++) {
-        //     $msXML = new MultipleChoice();
-        //     $msItem = $msXML->generate('multi');
-        //     print $msItem;
-        // } 
+        for ($i = 1; $i <= $iMax; $i++) {
+            $msXML = new MultipleChoice();
+            $msItem = $msXML->generateMC('multi');
+            $msItem->save($storagePath . 'multi' . $i . '.xml');
+        } 
     
-        // for ($j = 0; $j < $jMax; $j++) {
-        //     $ssXML = new MultipleChoice();
-        //     $ssItem = $ssXML->generate('single');
-        //     print $ssItem;
-        // }
+        for ($j = 1 ; $j <= $jMax; $j++) {
+            $ssXML = new MultipleChoice();
+            $ssItem = $ssXML->generateMC('single');
+            $ssItem->save($storagePath . 'single' . $j . '.xml');
+        }
     }
 
 
