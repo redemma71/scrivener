@@ -13,8 +13,24 @@ class Main extends Component {
     }
 
     handleGenerateItem(item) {
-      console.log("number of items requested: ", item.numItems);
-      console.log("type of items requested: ", item.selectionType);
+      fetch( 'api/multi-select/', 
+        {
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(item)
+        }
+      )
+      .then(response => 
+        { return response.json(); }
+      )
+      .then( (data) => 
+        {
+        console.log("number of items requested: ", data.numItems);
+        console.log("type of items requested: ", data.selectionType);
+        }
+      );
     }
 
     render() {
