@@ -1,30 +1,20 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
+import GenerateItems from './GenerateItems';
 
 class Main extends Component {
-    constructor(props) {
-      super(props);
+
+    constructor() {
+      super();
       this.state = {
-        items: {
-          selectionType: '',
-          numItems: ''
-        }
+        items: []
       };
-      this.handleInput = this.handleInput.bind(this);
-      this.handleSubmit = this.handleSubmit.bind(this);
+      this.handleGenerateItem = this.handleGenerateItem.bind(this);
     }
 
-    handleInput(key, event) {
-      var state = Object.assign({}, this.state.items);
-      state[key] = event.target.value;
-      this.setState({
-        items: state}
-      );
-    }
-
-    handleSubmit(event) {
-      event.preventDefault();
-      this.props.onAdd(this.state.items);
+    handleGenerateItem(item) {
+      console.log("number of items requested: ", item.numItems);
+      console.log("type of items requested: ", item.selectionType);
     }
 
     render() {
@@ -34,11 +24,7 @@ class Main extends Component {
                 Scrivener is your personal SOA file writer. Fill out the following form, and Scrivener
                 will create the SOA files for you instantaneously.
               </p>
-              <form onSubmit={this.handleSubmit}>
-                  <label htmlFor="MultipleChoice">MultipleChoice: <input type="text" value={this.state.value} onChange={this.handleChange} /></label><br />
-                  <label htmlFor="MultipleChoice">Number: <input type="text" value={this.state.value} onChange={this.handleChange} /></label><br />
-                  <input type="submit" value="Submit"/> 
-              </form>
+              <GenerateItems onGenerate={this.handleGenerateItem} />
             </div>
             );
         }
