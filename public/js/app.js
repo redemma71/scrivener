@@ -36231,29 +36231,64 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var Main = function (_Component) {
   _inherits(Main, _Component);
 
-  function Main() {
+  function Main(props) {
     _classCallCheck(this, Main);
 
-    return _possibleConstructorReturn(this, (Main.__proto__ || Object.getPrototypeOf(Main)).apply(this, arguments));
+    var _this = _possibleConstructorReturn(this, (Main.__proto__ || Object.getPrototypeOf(Main)).call(this, props));
+
+    _this.state = {
+      items: {
+        selectionType: '',
+        numItems: ''
+      }
+    };
+
+    // this.handleChange = this.handleChange.bind(this);
+    // this.handleSubmit = this.handleSubmit.bind(this);
+    return _this;
   }
 
   _createClass(Main, [{
+    key: 'handleInput',
+    value: function handleInput(key, e) {
+      var state = Object.assignj({}, this.state.items);
+      state[key] = e.target.value;
+      this.setState({ items: state });
+    }
+  }, {
+    key: 'handleSubmit',
+    value: function handleSubmit(e) {
+      e.preventDefault();
+      this.props.onAdd(this.state.items);
+    }
+  }, {
     key: 'render',
     value: function render() {
       return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
         'div',
-        { 'class': 'description' },
+        { className: 'description' },
         __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
           'p',
           null,
-          'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Totam perferendis ut, aspernatur dolores molestiae dignissimos asperiores, nobis quaerat impedit at dolor eius reiciendis suscipit! Esse excepturi quas corrupti eos dolorem.'
+          'Scrivener is your personal SOA file writer. Fill out the following form, and Scrivener will create the SOA files for you instantaneously.'
         ),
         __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-          'p',
-          null,
-          'Minima, nam, modi? Mollitia, aliquam. At pariatur doloribus velit ab distinctio, assumenda vel architecto quisquam nesciunt, officia ut sed magnam odit saepe in maiores dolorem praesentium necessitatibus veniam sequi. Maxime.'
-        ),
-        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { 'class': 'btn btn-primary', type: 'submit', value: 'Get Started' })
+          'form',
+          { onSubmit: this.handleSubmit },
+          __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+            'label',
+            { htmlFor: 'MultipleChoice' },
+            'MultipleChoice: ',
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { type: 'text', value: this.state.value, onChange: this.handleChange })
+          ),
+          __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+            'label',
+            { htmlFor: 'MultipleChoice' },
+            'Number: ',
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { type: 'text', value: this.state.value, onChange: this.handleChange })
+          ),
+          __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { type: 'submit', value: 'Submit' })
+        )
       );
     }
   }]);
@@ -53610,7 +53645,7 @@ var Logo = function (_Component) {
         null,
         __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
           'h2',
-          { 'class': 'text-primary', id: 'header-scrivener' },
+          { className: 'text-primary', id: 'header-scrivener' },
           'Welcome to Scrivener'
         ),
         __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('img', { src: __WEBPACK_IMPORTED_MODULE_2__public_images_scrivener_jpg___default.a, alt: 'Logo' })

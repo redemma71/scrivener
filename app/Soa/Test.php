@@ -1,19 +1,27 @@
-<?php 
+
+<?php
 namespace App\Soa;
 use App\Soa\MultipleChoice;
 use App\Soa\Item;
 use DOMDocument;
 use Storage;
-
-class Test {
-
-    public function wassup() {
-        echo "What's up?";
-    }
-
-
-    public function generateItem() {
-       
+/**
+ * Test class is a helper class
+ * used for testing creation of new
+ * item types in development.
+ * 
+ * @author Chad David Cover <chad.cover@cengage.com>
+ */
+class Test
+{
+    /**
+     * Generate sample items
+     * during new class development
+     *
+     * @return void
+     */
+    public function generateItem()
+    {   
         $iMax = 4;
         $jMax = 4;
         $storagePath = Storage::disk('soa')->getDriver()->getAdapter()->getPathPrefix();

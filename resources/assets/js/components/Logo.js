@@ -7,7 +7,7 @@ console.log(logo);
 class Logo extends Component {
     render() {
         return <div>
-            <h2 class="text-primary" id="header-scrivener">
+            <h2 className="text-primary" id="header-scrivener">
               Welcome to Scrivener
             </h2>
             <img src={logo} alt="Logo" />
