@@ -36248,21 +36248,16 @@ var Main = function (_Component) {
   _createClass(Main, [{
     key: 'handleGenerateItem',
     value: function handleGenerateItem(item) {
-      var select_type = item.select_type;
-      var num_items = item.num_items;
-      console.log(select_type);
+
+      var generate_items_form = new FormData();
+      generate_items_form.append('question_type', item.question_type);
+      generate_items_form.append('num_items', item.num_items);
 
       fetch('api/generate_items', {
-        method: 'post',
-        body: 'select_type=' + select_type + '&num_items=' + num_items,
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded' //,
-          // body:JSON.stringify(
-          //   { 'select_type': select_type, 
-          //     'num_items': num_items
-          //   })
-        } }).then(function (response) {
-        return response.json();
+        method: 'POST',
+        body: generate_items_form
+      }).then(function (response) {
+        return console.log(response);
       }).catch(function (error) {
         return console.log(error);
       });
@@ -53611,82 +53606,101 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 
 var GenerateItems = function (_Component) {
-    _inherits(GenerateItems, _Component);
+  _inherits(GenerateItems, _Component);
 
-    function GenerateItems(props) {
-        _classCallCheck(this, GenerateItems);
+  function GenerateItems(props) {
+    _classCallCheck(this, GenerateItems);
 
-        var _this = _possibleConstructorReturn(this, (GenerateItems.__proto__ || Object.getPrototypeOf(GenerateItems)).call(this, props));
+    var _this = _possibleConstructorReturn(this, (GenerateItems.__proto__ || Object.getPrototypeOf(GenerateItems)).call(this, props));
 
-        _this.state = {
-            item: {
-                select_type: '',
-                num_items: ''
-            }
-        };
+    _this.state = {
+      item: {
+        question_type: '',
+        num_items: ''
+      }
+    };
 
-        _this.handleInput = _this.handleInput.bind(_this);
-        _this.handleSubmit = _this.handleSubmit.bind(_this);
-        return _this;
+    _this.handleInput = _this.handleInput.bind(_this);
+    _this.handleSubmit = _this.handleSubmit.bind(_this);
+    return _this;
+  }
+
+  _createClass(GenerateItems, [{
+    key: 'handleInput',
+    value: function handleInput(key, event) {
+      var state = Object.assign({}, this.state.item);
+      state[key] = event.target.value;
+      this.setState({
+        item: state });
     }
+  }, {
+    key: 'handleSubmit',
+    value: function handleSubmit(event) {
+      event.preventDefault();
+      this.props.generate(this.state.item);
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      var _this2 = this;
 
-    _createClass(GenerateItems, [{
-        key: 'handleInput',
-        value: function handleInput(key, event) {
-            var state = Object.assign({}, this.state.item);
-            state[key] = event.target.value;
-            this.setState({
-                item: state });
-        }
-    }, {
-        key: 'handleSubmit',
-        value: function handleSubmit(event) {
-            event.preventDefault();
-            this.props.generate(this.state.item);
-        }
-    }, {
-        key: 'render',
-        value: function render() {
-            var _this2 = this;
+      return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+        'div',
+        null,
+        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+          'form',
+          { id: 'generate_items', onSubmit: this.handleSubmit },
+          __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+            'label',
+            { htmlFor: 'question_type' },
+            'Question Type:',
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+              'select',
+              { name: 'question_type',
+                onChange: function onChange(event) {
+                  return _this2.handleInput('question_type', event);
+                } },
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                'option',
+                { value: 'multi' },
+                'Multi-Select'
+              ),
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                'option',
+                { value: 'single' },
+                'Single-Select'
+              ),
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                'option',
+                { value: 'tf' },
+                'True/False'
+              )
+            )
+          ),
+          __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('br', null),
+          __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+            'label',
+            { htmlFor: 'NumberOfItems' },
+            'Number:',
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { type: 'number',
+              onChange: function onChange(event) {
+                return _this2.handleInput('num_items', event);
+              } })
+          ),
+          __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('br', null)
+        ),
+        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+          'button',
+          { className: 'btn btn-primary',
+            onClick: this.handleSubmit },
+          'Create Items'
+        ),
+        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { type: 'hidden', name: '_token', id: 'csrf-token', value: '{{ Session::token() }}' })
+      );
+    }
+  }]);
 
-            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                'div',
-                null,
-                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                    'form',
-                    { onSubmit: this.handleSubmit },
-                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                        'label',
-                        { htmlFor: 'MultipleChoice' },
-                        'Multiple-Choice:',
-                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { type: 'text',
-                            onChange: function onChange(event) {
-                                return _this2.handleInput('select_type', event);
-                            } })
-                    ),
-                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('br', null),
-                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                        'label',
-                        { htmlFor: 'NumberOfItems' },
-                        'Number:',
-                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { type: 'text',
-                            onChange: function onChange(event) {
-                                return _this2.handleInput('num_items', event);
-                            } })
-                    ),
-                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('br', null)
-                ),
-                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                    'button',
-                    { onClick: this.handleSubmit },
-                    'Create Items'
-                ),
-                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { type: 'hidden', name: '_token', id: 'csrf-token', value: '{{ Session::token() }}' })
-            );
-        }
-    }]);
-
-    return GenerateItems;
+  return GenerateItems;
 }(__WEBPACK_IMPORTED_MODULE_0_react__["Component"]);
 
 /* harmony default export */ __webpack_exports__["a"] = (GenerateItems);

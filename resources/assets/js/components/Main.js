@@ -13,23 +13,17 @@ class Main extends Component {
     }
 
     handleGenerateItem(item) {
-      let select_type = item.select_type;
-      let num_items = item.num_items;
-      console.log(select_type);
+      
+      let generate_items_form = new FormData();
+      generate_items_form.append('question_type',item.question_type);
+      generate_items_form.append('num_items',item.num_items);
 
       fetch('api/generate_items', 
         {
-          method: 'post',
-          body: `select_type=${select_type}&num_items=${num_items}`,
-          headers: {
-             'Content-Type': 'application/x-www-form-urlencoded'
-          } //,
-          // body:JSON.stringify(
-          //   { 'select_type': select_type, 
-          //     'num_items': num_items
-          //   })
+          method: 'POST',
+          body: generate_items_form,
         })
-        .then( (response) => response.json() )
+        .then( (response) => console.log(response) )
         .catch( (error) => console.log(error) )
     }
 
