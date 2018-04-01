@@ -21,11 +21,7 @@ Route::middleware(
     }
 );
 
-Route::post('generate_items', [
-        'uses' => 'MultipleChoiceController@generateItems',
-        'as' => 'generate_items' 
-        ] 
-);
+Route::post('generate_items', 'MultipleChoiceController@generateItems');
 
 Route::get('products/{product}', function ($productId) {
     return response()->json(['productId' => "{$productId}"], 200);
