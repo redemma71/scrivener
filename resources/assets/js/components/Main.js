@@ -13,24 +13,24 @@ class Main extends Component {
     }
 
     handleGenerateItem(item) {
-      fetch( 'api/multi-select/', 
+      let select_type = item.select_type;
+      let num_items = item.num_items;
+      console.log(select_type);
+
+      fetch('api/generate_items', 
         {
+          method: 'post',
+          body: `select_type=${select_type}&num_items=${num_items}`,
           headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(item)
-        }
-      )
-      .then(response => 
-        { return response.json(); }
-      )
-      .then( (data) => 
-        {
-        console.log("number of items requested: ", data.numItems);
-        console.log("type of items requested: ", data.selectionType);
-        }
-      );
+             'Content-Type': 'application/x-www-form-urlencoded'
+          } //,
+          // body:JSON.stringify(
+          //   { 'select_type': select_type, 
+          //     'num_items': num_items
+          //   })
+        })
+        .then( (response) => response.json() )
+        .catch( (error) => console.log(error) )
     }
 
     render() {
@@ -40,7 +40,7 @@ class Main extends Component {
                 Scrivener is your personal SOA file writer. Fill out the following form, and Scrivener
                 will create the SOA files for you instantaneously.
               </p>
-              <GenerateItems onGenerate={this.handleGenerateItem} />
+              <GenerateItems generate={this.handleGenerateItem} />
             </div>
             );
         }

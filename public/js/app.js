@@ -36248,8 +36248,24 @@ var Main = function (_Component) {
   _createClass(Main, [{
     key: 'handleGenerateItem',
     value: function handleGenerateItem(item) {
-      console.log("number of items requested: ", item.numItems);
-      console.log("type of items requested: ", item.selectionType);
+      var select_type = item.select_type;
+      var num_items = item.num_items;
+      console.log(select_type);
+
+      fetch('api/generate_items', {
+        method: 'post',
+        body: 'select_type=' + select_type + '&num_items=' + num_items,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded' //,
+          // body:JSON.stringify(
+          //   { 'select_type': select_type, 
+          //     'num_items': num_items
+          //   })
+        } }).then(function (response) {
+        return response.json();
+      }).catch(function (error) {
+        return console.log(error);
+      });
     }
   }, {
     key: 'render',
@@ -36262,7 +36278,7 @@ var Main = function (_Component) {
           null,
           'Scrivener is your personal SOA file writer. Fill out the following form, and Scrivener will create the SOA files for you instantaneously.'
         ),
-        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_2__GenerateItems__["a" /* default */], { onGenerate: this.handleGenerateItem })
+        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_2__GenerateItems__["a" /* default */], { generate: this.handleGenerateItem })
       );
     }
   }]);
@@ -53604,8 +53620,8 @@ var GenerateItems = function (_Component) {
 
         _this.state = {
             item: {
-                selectionType: '',
-                numItems: ''
+                select_type: '',
+                num_items: ''
             }
         };
 
@@ -53626,7 +53642,7 @@ var GenerateItems = function (_Component) {
         key: 'handleSubmit',
         value: function handleSubmit(event) {
             event.preventDefault();
-            this.props.onGenerate(this.state.item);
+            this.props.generate(this.state.item);
         }
     }, {
         key: 'render',
@@ -53645,7 +53661,7 @@ var GenerateItems = function (_Component) {
                         'Multiple-Choice:',
                         __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { type: 'text',
                             onChange: function onChange(event) {
-                                return _this2.handleInput('selectionType', event);
+                                return _this2.handleInput('select_type', event);
                             } })
                     ),
                     __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('br', null),
@@ -53655,7 +53671,7 @@ var GenerateItems = function (_Component) {
                         'Number:',
                         __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { type: 'text',
                             onChange: function onChange(event) {
-                                return _this2.handleInput('numItems', event);
+                                return _this2.handleInput('num_items', event);
                             } })
                     ),
                     __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('br', null)
@@ -53664,7 +53680,8 @@ var GenerateItems = function (_Component) {
                     'button',
                     { onClick: this.handleSubmit },
                     'Create Items'
-                )
+                ),
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { type: 'hidden', name: '_token', id: 'csrf-token', value: '{{ Session::token() }}' })
             );
         }
     }]);

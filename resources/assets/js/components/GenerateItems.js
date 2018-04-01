@@ -6,8 +6,8 @@ class GenerateItems extends Component {
         super(props);
         this.state = {
           item: {
-            selectionType: '',
-            numItems: ''
+            select_type: '',
+            num_items: ''
           }
         };
   
@@ -25,7 +25,7 @@ class GenerateItems extends Component {
   
       handleSubmit(event) {
         event.preventDefault();
-        this.props.onGenerate(this.state.item);
+        this.props.generate(this.state.item);
       }
   
       render() {
@@ -34,14 +34,15 @@ class GenerateItems extends Component {
                 <form onSubmit={this.handleSubmit}>
                     <label htmlFor="MultipleChoice">Multiple-Choice: 
                         <input type="text"  
-                        onChange={ (event) => this.handleInput('selectionType', event) } />
+                        onChange={ (event) => this.handleInput('select_type', event) } />
                     </label><br />
                     <label htmlFor="NumberOfItems">Number: 
                         <input type="text"
-                         onChange={ (event) => this.handleInput('numItems', event)} />
+                         onChange={ (event) => this.handleInput('num_items', event)} />
                     </label><br /> 
                 </form>
                 <button onClick={this.handleSubmit}>Create Items</button>
+                <input type="hidden" name="_token" id="csrf-token" value="{{ Session::token() }}" />
             </div>                
             )
       }
