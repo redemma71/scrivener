@@ -3,6 +3,7 @@
 namespace App\Soa;
 
 use App\Soa\Item;
+use App\Soa\Prompt;
 use App\Soa\helpers;
 use Faker;
 use DomDocument;
@@ -28,16 +29,20 @@ class TrueFalse {
         $assessment_item->setAttribute('entity-subtype','true-false');
         $true_false = $this->item->createElementNS('http://www.cengage.com/CARS/2','cars:true-false');
         $true_false->setAttribute('cgi',generateCGI());
+        
         // append prompt and paragraph to cars:true-false
-        // this should be abstracted
-        $prompt = $this->item->createElementNS('http://www.cengage.com/CARS/2','cars:prompt');
-        $promptPara = $this->item->createElementNS('http://www.cengage.com/CARS/2','cars:paragraph',$this->faker->realText(100)); 
-        $prompt->appendChild($promptPara);
-        $true_false->appendChild($prompt);
+        $promptObj = new Prompt();
+        $promptStr = $promptObj->createPrompt();
+        $promptDOM = new DOMDocument;
+        $promptDOM->loadXML($promptStr);
+        $promptNode = $promptDOM->getElementsByTagName("prompt")->item(0);
+        $promptNode = $this->item->importNode($promptNode,true);
+        $true_false->appendChild($promptNode);
+        
+        // append correct-option & incorrect-option
         $tFArray = array('true','false');
         $tfRand = rand(0,1);
         $answerIsTOrF = $tFArray[$tfRand];
-        
         if ($answerIsTOrF == 'true') {
             // correct option: this should be abstracted
             $correct_option = $this->item->createElementNS('http://www.cengage.com/CARS/2','cars:correct-option');
