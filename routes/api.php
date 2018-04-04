@@ -22,7 +22,4 @@ Route::middleware(
 );
 
 Route::post('generate_items', 'MultipleChoiceController@generateItems');
-
-Route::get('products/{product}', function ($productId) {
-    return response()->json(['productId' => "{$productId}"], 200);
-});
+Route::post('generate_tfs', 'TrueFalseController@generateItems');

@@ -17,55 +17,7 @@ class MultipleChoice {
         // append Item XML to this item
         $this->item->loadXML($xml->generate());
         $this->faker = Faker\Factory::create();
-
     }
-
-    public function createCorrectOptions($select,$numCorrect) {
-        for ($i = 0; $i < $numCorrect; $i++) {
-            $correct_option = $this->item->createElementNS('http://www.cengage.com/CARS/2','cars:correct-option');
-            $correct_option->setAttribute('cgi',generateCGI());
-            // randomize minor attributes here
-            $correct_answer = $this->item->createElementNS('http://www.cengage.com/CARS/2','cars:answer',$this->faker->unique()->jobTitle);
-            $correct_option->appendChild($correct_answer);
-            $randFeedback = rand(1,10);
-            if ($randFeedback >= 6) {
-                $correct_feedback = $this->item->createElementNS('http://www.cengage.com/CARS/2','cars:feedback',$this->faker->realText(50));
-                $correct_option->appendChild($correct_feedback);
-            }
-            $select->appendChild($correct_option);
-        }
-    }
-
-    public function createIncorrectOptions($select) {
-        for ($j= 0; $j < 5; $j++) {
-            $incorrect_option = $this->item->createElementNS('http://www.cengage.com/CARS/2','cars:incorrect-option');
-            $incorrect_option->setAttribute('cgi',generateCGI());
-            // randomize minor attributes here
-            $incorrect_answer = $this->item->createElementNS('http://www.cengage.com/CARS/2','cars:answer',$this->faker->unique()->jobTitle);
-            $incorrect_option->appendChild($incorrect_answer);
-            $randFeedback = rand(1,10);
-            if ($randFeedback >= 6) {
-                $incorrect_feedback = $this->item->createElementNS('http://www.cengage.com/CARS/2','cars:feedback',$this->faker->realText(50));
-                $incorrect_option->appendChild($incorrect_feedback);
-            }
-            $select->appendChild($incorrect_option);
-        }
-    }
-
-    public function createSingleSelect($select) {
-        $this->createCorrectOptions($select,1); 
-        $numIncorrect = rand(1,5);
-        $this->createIncorrectOptions($select);
-        return $this->item->saveXML();
-    }
-
-    public function createMultiSelect($select) {
-            $numCorrect = rand(2,5);
-            $this->createCorrectOptions($select,$numCorrect);    
-            $numIncorrect = rand(1,5);
-            $this->createIncorrectOptions($select);
-            return $this->item->saveXML();
-    }    
 
     public function generateMC($selectType) {
         header("content-type: application/xml; UTF-8");
@@ -82,6 +34,7 @@ class MultipleChoice {
         $multiple_choice = $this->item->createElementNS('http://www.cengage.com/CARS/2','cars:multiple-choice');
         $multiple_choice->setAttribute('cgi',generateCGI());
         // append prompt & paragraph to cars:multiple-choice
+        // this should be abstracted
         $prompt = $this->item->createElementNS('http://www.cengage.com/CARS/2','cars:prompt');
         $promptPara = $this->item->createElementNS('http://www.cengage.com/CARS/2','cars:paragraph',$this->faker->realText(100)); 
         $prompt->appendChild($promptPara);
@@ -109,6 +62,59 @@ class MultipleChoice {
         // return $item->save($storagePath.'test.xml');
         return $this->item;
     }
+
+    public function createSingleSelect($select) {
+        $this->createCorrectOptions($select,1); 
+        $numIncorrect = rand(1,5);
+        $this->createIncorrectOptions($select);
+        return $this->item->saveXML();
+    }
+
+    public function createMultiSelect($select) {
+            $numCorrect = rand(2,5);
+            $this->createCorrectOptions($select,$numCorrect);    
+            $numIncorrect = rand(1,5);
+            $this->createIncorrectOptions($select);
+            return $this->item->saveXML();
+    }    
+
+
+    public function createCorrectOptions($select,$numCorrect) {
+        for ($i = 0; $i < $numCorrect; $i++) {
+            $correct_option = $this->item->createElementNS('http://www.cengage.com/CARS/2','cars:correct-option');
+            $correct_option->setAttribute('cgi',generateCGI());
+            // randomize minor attributes here
+            $correct_answer = $this->item->createElementNS('http://www.cengage.com/CARS/2','cars:answer',$this->faker->unique()->jobTitle);
+            $correct_option->appendChild($correct_answer);
+            $randFeedback = rand(1,10);
+            if ($randFeedback >= 6) {
+                $correct_feedback = $this->item->createElementNS('http://www.cengage.com/CARS/2','cars:feedback');
+                $correct_feedback_text =  $this->item->createElementNS('http://www.cengage.com/CARS/2','cars:paragraph',$this->faker->realText(50));
+                $correct_feedback->appendChild($correct_feedback_text);
+                $correct_option->appendChild($correct_feedback);
+            }
+            $select->appendChild($correct_option);
+        }
+    }
+
+    public function createIncorrectOptions($select) {
+        for ($j= 0; $j < 5; $j++) {
+            $incorrect_option = $this->item->createElementNS('http://www.cengage.com/CARS/2','cars:incorrect-option');
+            $incorrect_option->setAttribute('cgi',generateCGI());
+            // randomize minor attributes here
+            $incorrect_answer = $this->item->createElementNS('http://www.cengage.com/CARS/2','cars:answer',$this->faker->unique()->jobTitle);
+            $incorrect_option->appendChild($incorrect_answer);
+            $randFeedback = rand(1,10);
+            if ($randFeedback >= 6) {
+                $incorrect_feedback = $this->item->createElementNS('http://www.cengage.com/CARS/2','cars:feedback');
+                $incorrect_feedback_text =  $this->item->createElementNS('http://www.cengage.com/CARS/2','cars:paragraph',$this->faker->realText(50));
+                $incorrect_feedback->appendChild($incorrect_feedback_text);
+                $incorrect_option->appendChild($incorrect_feedback);
+            }
+            $select->appendChild($incorrect_option);
+        }
+    }
+
 }
 
 ?>

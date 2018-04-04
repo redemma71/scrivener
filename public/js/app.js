@@ -36253,14 +36253,25 @@ var Main = function (_Component) {
       generate_items_form.append('question_type', item.question_type);
       generate_items_form.append('num_items', item.num_items);
 
-      fetch('api/generate_items', {
-        method: 'POST',
-        body: generate_items_form
-      }).then(function (response) {
-        return console.log(response);
-      }).catch(function (error) {
-        return console.log(error);
-      });
+      if (item.question_type == 'tf') {
+        fetch('api/generate_tfs', {
+          method: 'POST',
+          body: generate_items_form
+        }).then(function (response) {
+          return console.log(response);
+        }).catch(function (error) {
+          return console.log(error);
+        });
+      } else {
+        fetch('api/generate_items', {
+          method: 'POST',
+          body: generate_items_form
+        }).then(function (response) {
+          return console.log(response);
+        }).catch(function (error) {
+          return console.log(error);
+        });
+      }
     }
   }, {
     key: 'render',

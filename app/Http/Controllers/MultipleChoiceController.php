@@ -17,14 +17,18 @@ class MultipleChoiceController extends Controller
     
         $storagePath = Storage::disk('soa')->getDriver()->getAdapter()->getPathPrefix();
     
-        if ($question_type == 'multi' || $question_type == 'single') {
+        if ($question_type == 'multi') {
             for ($i = 1; $i <= $num_items; $i++) {
                 $msXML = new MultipleChoice();
                 $msItem = $msXML->generateMC($question_type);
                 $msItem->save($storagePath . $question_type . '-' . $i . '.xml');
             }
-        } elseif ($question_type == 'tf') {
-            return;
+        } elseif ($question_type == 'single') {
+            for ($i = 1; $i <= $num_items; $i++) {
+                $msXML = new MultipleChoice();
+                $msItem = $msXML->generateMC($question_type);
+                $msItem->save($storagePath . $question_type . '-' . $i . '.xml');
+            }
         } else {
             return;
         }
