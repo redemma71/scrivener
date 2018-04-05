@@ -4,7 +4,7 @@ namespace App\Soa;
 
 use App\Soa\helpers;
 use Faker;
-use DomDocument;
+use DOMDocument;
 
 require_once 'helpers.php';
 
@@ -15,7 +15,7 @@ class Item {
     public function generate() {
         header( 'content-type: application/xml; UTF-8' );
         $faker = Faker\Factory::create();
-        $title = $faker->lexify('Select Assessment ????');
+        $title = $faker->lexify('Sample assessment item ????');
         $xml = new DOMDocument('1.0','UTF-8');
         $xml_item = $xml->createElementNS('http://www.cengage.com/CARS/2','cars:assessment');
         $xml_item->setAttribute('cgi',generateCGI());

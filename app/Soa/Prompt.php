@@ -4,7 +4,7 @@ namespace App\Soa;
 
 use App\Soa\helpers;
 use Faker;
-use DomDocument;
+use DOMDocument;
 
 require_once 'helpers.php';
 
@@ -15,9 +15,10 @@ class Prompt {
         $this->faker = Faker\Factory::create();
     }
 
+
     function createPrompt() {
-        $prompt = $this->dom->createElementNS('http://www.cengage.com/CARS/2','cars:prompt');
-        $promptPara = $this->dom->createElementNS('http://www.cengage.com/CARS/2','cars:paragraph',$this->faker->realText(100)); 
+        $prompt = $this->dom->createElementNS(CARS_NS,'cars:prompt');
+        $promptPara = $this->dom->createElementNS(CARS_NS,'cars:paragraph',$this->faker->realText(100)); 
         $prompt->appendChild($promptPara);
         $this->dom->appendChild($prompt);
         return $this->dom->saveXML($prompt);

@@ -4,10 +4,12 @@ namespace App\Soa;
 
 use App\Soa\Item;
 use App\Soa\Prompt;
+use App\Soa\AnswerOption;
 use App\Soa\helpers;
 use Faker;
-use DomDocument;
+use DOMDocument;
 use Storage;
+define('CARS_NS','http://www.cengage.com/CARS/2');
 
 require_once 'helpers.php';
 
@@ -24,95 +26,51 @@ class TrueFalse {
     public function generateTF() {
         header("content-type: application/xml; UTF-8");
 
-        $assessment_items = $this->item->getElementsByTagnameNS("http://www.cengage.com/CARS/2","assessment");
+        $assessment_items = $this->item->getElementsByTagNameNS(CARS_NS,"assessment");
         $assessment_item = $assessment_items->item(0);
         $assessment_item->setAttribute('entity-subtype','true-false');
-        $true_false = $this->item->createElementNS('http://www.cengage.com/CARS/2','cars:true-false');
+        $true_false = $this->item->createElementNS(CARS_NS,'cars:true-false');
         $true_false->setAttribute('cgi',generateCGI());
         
         // append prompt and paragraph to cars:true-false
-        $promptObj = new Prompt();
-        $promptStr = $promptObj->createPrompt();
-        $promptDOM = new DOMDocument;
-        $promptDOM->loadXML($promptStr);
-        $promptNode = $promptDOM->getElementsByTagName("prompt")->item(0);
-        $promptNode = $this->item->importNode($promptNode,true);
-        $true_false->appendChild($promptNode);
+        $prompt_obj = new Prompt();
+        $prompt_str = $prompt_obj->createPrompt();
+        $prompt_dom = new DOMDocument;
+        $prompt_dom->loadXML($prompt_str);
+        $prompt_node = $prompt_dom->getElementsByTagName("prompt")->item(0);
+        $prompt_node = $this->item->importNode($prompt_node,true);
+        $true_false->appendChild($prompt_node);
         
-        // append correct-option & incorrect-option
-        $tFArray = array('true','false');
-        $tfRand = rand(0,1);
-        $answerIsTOrF = $tFArray[$tfRand];
-        if ($answerIsTOrF == 'true') {
-            // correct option: this should be abstracted
-            $correct_option = $this->item->createElementNS('http://www.cengage.com/CARS/2','cars:correct-option');
-            $correct_option->setAttribute('cgi',generateCGI());
-            $correct_option->setAttribute('true-false-option-type','true');
-            // randomize minor attributes here
-            $correct_answer = $this->item->createElementNS('http://www.cengage.com/CARS/2','cars:answer','true');
-            $correct_option->appendChild($correct_answer);
-            $randFeedback = rand(1,10);
-            if ($randFeedback >= 6) {
-                $correct_feedback = $this->item->createElementNS('http://www.cengage.com/CARS/2','cars:feedback',$this->faker->realText(50));
-                $correct_option->appendChild($correct_feedback);
-            }
-            $true_false->appendChild($correct_option);
+        // append correct-option
+        $tf_array = array('true','false');
+        $tf_array_rand = array_rand($tf_array);
+        $correct_answer = $tf_array[$tf_array_rand];
+        $correct_option_obj = new AnswerOption();
+        $correct_option_str= $correct_option_obj->createCorrectOption($correct_answer);
+        $correct_option_dom = new DOMDocument();
+        $correct_option_dom->loadXML($correct_option_str);
+        $correct_option_node = $correct_option_dom->getElementsByTagName("correct-option")->item(0);
+        $correct_option_node = $this->item->importNode($correct_option_node,true);
+        $true_false->appendChild($correct_option_node);
 
-            // incorrect option: this should be abstracted
-            $incorrect_option = $this->item->createElementNS('http://www.cengage.com/CARS/2','cars:incorrect-option');
-            $incorrect_option->setAttribute('cgi',generateCGI());
-            $incorrect_option->setAttribute('true-false-option-type','false');
-            // randomize minor attributes here
-            $incorrect_answer = $this->item->createElementNS('http://www.cengage.com/CARS/2','cars:answer','false');
-            $incorrect_option->appendChild($incorrect_answer);
-            $randFeedback = rand(1,10);
-            if ($randFeedback >= 6) {
-                $incorrect_feedback = $this->item->createElementNS('http://www.cengage.com/CARS/2','cars:feedback',$this->faker->realText(50));
-                $incorrect_option->appendChild($incorrect_feedback);
-            }
-            $true_false->appendChild($incorrect_option);
-
-        } else {
-
-          // correct option: 
-          // TODO: Use a class here. AnswerOptions.php
-          $correct_option = $this->item->createElementNS('http://www.cengage.com/CARS/2','cars:correct-option');
-          $correct_option->setAttribute('cgi',generateCGI());
-          $correct_option->setAttribute('true-false-option-type','false');
-          // randomize minor attributes here
-          $correct_answer = $this->item->createElementNS('http://www.cengage.com/CARS/2','cars:answer','false');
-          $correct_option->appendChild($correct_answer);
-          $randFeedback = rand(1,10);
-          if ($randFeedback >= 6) {
-              $correct_feedback = $this->item->createElementNS('http://www.cengage.com/CARS/2','cars:feedback');
-              $correct_feedback_text =  $this->item->createElementNS('http://www.cengage.com/CARS/2','cars:paragraph',$this->faker->realText(50));
-              $correct_feedback->appendChild($correct_feedback_text);
-              $correct_option->appendChild($correct_feedback);
-          }
-          $true_false->appendChild($correct_option);
-
-          // incorrect option
-          // TODO: Use a class here. See AnswerOptions.php
-          $incorrect_option = $this->item->createElementNS('http://www.cengage.com/CARS/2','cars:incorrect-option');
-          $incorrect_option->setAttribute('cgi',generateCGI());
-          $incorrect_option->setAttribute('true-false-option-type','true');
-          // randomize minor attributes here
-          $incorrect_answer = $this->item->createElementNS('http://www.cengage.com/CARS/2','cars:answer','true');
-          $incorrect_option->appendChild($incorrect_answer);
-          $randFeedback = rand(1,10);
-          if ($randFeedback >= 6) {
-              $incorrect_feedback = $this->item->createElementNS('http://www.cengage.com/CARS/2','cars:feedback');
-              $incorrect_feedback_text =  $this->item->createElementNS('http://www.cengage.com/CARS/2','cars:paragraph',$this->faker->realText(50));
-              $incorrect_feedback->appendChild($incorrect_feedback_text);
-              $incorrect_option->appendChild($incorrect_feedback);
-          }
-          $true_false->appendChild($incorrect_option);
+        // incorrect option
+        $incorrect_option = $this->item->createElementNS(CARS_NS,'cars:incorrect-option');
+        $incorrect_option->setAttribute('cgi',generateCGI());
+        $incorrect_option->setAttribute('true-false-option-type','false');
+        // randomize minor attributes here
+        $incorrect_answer = $this->item->createElementNS(CARS_NS,'cars:answer','false');
+        $incorrect_option->appendChild($incorrect_answer);
+        $randFeedback = rand(1,10);
+        if ($randFeedback >= 6) {
+            $incorrect_feedback = $this->item->createElementNS(CARS_NS,'cars:feedback',$this->faker->realText(50));
+            $incorrect_option->appendChild($incorrect_feedback);
         }
+        $true_false->appendChild($incorrect_option);
 
         $randOverallFeedback = rand(1,10);
         if ($randOverallFeedback > 9) {
-            $overall_feedback = $this->item->createElementNS('http://www.cengage.com/CARS/2','cars:feedback');
-            $overall_feedback_text = $this->item->createElementNS('http://www.cengage.com/CARS/2','cars:paragraph',$this->faker->realText(50));
+            $overall_feedback = $this->item->createElementNS(CARS_NS,'cars:feedback');
+            $overall_feedback_text = $this->item->createElementNS(CARS_NS,'cars:paragraph',$this->faker->realText(50));
             $overall_feedback->appendChild($overall_feedback_text);
             $true_false->appendChild($overall_feedback);
         }
@@ -120,7 +78,6 @@ class TrueFalse {
          // append cars:true-false to cars:assessment-item
          $assessment_item->appendChild($true_false);
          $this->item->formatOutput = true;
-         // return $item->save($storagePath.'test.xml');
          return $this->item;
     
     }
