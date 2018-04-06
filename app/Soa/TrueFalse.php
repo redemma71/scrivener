@@ -4,6 +4,7 @@ namespace App\Soa;
 
 use App\Soa\Item;
 use App\Soa\Prompt;
+use App\Soa\Feedback;
 use App\Soa\AnswerOption;
 use App\Soa\helpers;
 use Faker;
@@ -54,32 +55,37 @@ class TrueFalse {
         $true_false->appendChild($correct_option_node);
 
         // incorrect option
-        $incorrect_option = $this->item->createElementNS(CARS_NS,'cars:incorrect-option');
-        $incorrect_option->setAttribute('cgi',generateCGI());
-        $incorrect_option->setAttribute('true-false-option-type','false');
-        // randomize minor attributes here
-        $incorrect_answer = $this->item->createElementNS(CARS_NS,'cars:answer','false');
-        $incorrect_option->appendChild($incorrect_answer);
-        $randFeedback = rand(1,10);
-        if ($randFeedback >= 6) {
-            $incorrect_feedback = $this->item->createElementNS(CARS_NS,'cars:feedback',$this->faker->realText(50));
-            $incorrect_option->appendChild($incorrect_feedback);
+        $incorrect_option_obj = new AnswerOption();
+        if ($correct_answer === 'false') {
+            $incorrect_option_str = $incorrect_option_obj->createIncorrectOption('true');
+        } else {
+            $incorrect_option_str = $incorrect_option_obj->createIncorrectOption('false');
         }
-        $true_false->appendChild($incorrect_option);
+        $incorrect_option_dom = new DOMDocument();
+        $incorrect_option_dom->loadXML($incorrect_option_str);
+        $incorrect_option_node = $incorrect_option_dom->getElementsByTagName("incorrect-option")->item(0);
+        $incorrect_option_node = $this->item->importNode($incorrect_option_node,true);
+        $true_false->appendChild($incorrect_option_node);
 
-        $randOverallFeedback = rand(1,10);
-        if ($randOverallFeedback > 9) {
-            $overall_feedback = $this->item->createElementNS(CARS_NS,'cars:feedback');
-            $overall_feedback_text = $this->item->createElementNS(CARS_NS,'cars:paragraph',$this->faker->realText(50));
-            $overall_feedback->appendChild($overall_feedback_text);
-            $true_false->appendChild($overall_feedback);
+        $random_overall_feedback = rand(1,10);
+        if ($random_overall_feedback > 9) {
+            $overall_feedback_obj = new Feedback();
+            $overall_feedback_str= $overall_feedback_obj->createFeedback();
+            $overall_feedback_dom = new DOMDocument();
+            $overall_feedback_dom->loadXML($overall_feedback_str);
+            $overall_feedback_node = $overall_feedback_dom->getElementsByTagName("feedback")->item(0);
+            $overall_feedback_node = $this->item->importNode($overall_feedback_node,true);
+            $true_false->appendChild($overall_feedback_node);
+            // $overall_feedback = $this->item->createElementNS(CARS_NS,'cars:feedback');
+            // $overall_feedback_text = $this->item->createElementNS(CARS_NS,'cars:paragraph',$this->faker->realText(50));
+            // $overall_feedback->appendChild($overall_feedback_text);
+            // $true_false->appendChild($overall_feedback);
         }
 
          // append cars:true-false to cars:assessment-item
          $assessment_item->appendChild($true_false);
          $this->item->formatOutput = true;
          return $this->item;
-    
     }
 
 }

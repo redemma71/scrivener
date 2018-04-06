@@ -21,5 +21,5 @@ Route::middleware(
     }
 );
 
-Route::post('generate_items', 'MultipleChoiceController@generateItems');
+Route::post('generate_mcs', 'MultipleChoiceController@generateItems');
 Route::post('generate_tfs', 'TrueFalseController@generateItems');

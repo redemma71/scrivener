@@ -2,17 +2,12 @@
 
 namespace App\Soa;
 
-use App\Soa\helpers;
-use Faker;
-use DOMDocument;
+use App\Soa\AbstractComponent;
 
-require_once 'helpers.php';
-
-class Prompt {
+class Prompt extends AbstractComponent {
 
     function __construct() {
-        $this->dom = new DOMDocument();
-        $this->faker = Faker\Factory::create();
+        parent::__construct();
     }
 
 

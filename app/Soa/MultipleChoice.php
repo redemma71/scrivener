@@ -25,14 +25,14 @@ class MultipleChoice {
         header("content-type: application/xml; UTF-8");
 
         if ($selectType === 'multi') {
-            $entitySubtype = 'multi-select';
+            $entity_subtype = 'multi-select';
         } else {
-            $entitySubtype = 'single-select';
+            $entity_subtype = 'single-select';
         } 
 
         $assessment_items = $this->item->getElementsByTagNameNS(CARS_NS,"assessment");
         $assessment_item = $assessment_items->item(0);
-        $assessment_item->setAttribute('entity-subtype',$entitySubtype);
+        $assessment_item->setAttribute('entity-subtype',$entity_subtype);
         $multiple_choice = $this->item->createElementNS(CARS_NS,'cars:multiple-choice');
         $multiple_choice->setAttribute('cgi',generateCGI());
         // append prompt & paragraph to cars:multiple-choice
@@ -45,18 +45,18 @@ class MultipleChoice {
         $multiple_choice->appendChild($prompt_node);
 
         // append multi- or single-select
-        if ($entitySubtype === 'multi-select') {
-            $selectionElement = 'cars:multi-select';
+        if ($entity_subtype === 'multi-select') {
+            $selection_element = 'cars:multi-select';
         } else {    // single-select
-            $selectionElement = 'cars:single-select';
+            $selection_element = 'cars:single-select';
         }
-        $select = $this->item->createElementNS(CARS_NS,$selectionElement);
+        $select = $this->item->createElementNS(CARS_NS,$selection_element);
         $select->setAttribute('order','shuffled');
         $select->setAttribute('options-label','lowercase');
         $multiple_choice->appendChild($select);
 
         // single- and multi-select
-        if ($entitySubtype == 'multi-select') {
+        if ($entity_subtype == 'multi-select') {
             $this->createMultiSelect($select);
         } else {    // single-select
             $this->createSingleSelect($select);
@@ -64,59 +64,62 @@ class MultipleChoice {
         // append cars:multiple-choice to cars:assessment-item
         $assessment_item->appendChild($multiple_choice);
         $this->item->formatOutput = true;
-        // return $item->save($storagePath.'test.xml');
         return $this->item;
     }
 
-    public function createSingleSelect($select) {
-        $this->createCorrectOptions($select,1); 
-        $numIncorrect = rand(1,5);
-        $this->createIncorrectOptions($select);
+    public function createSingleSelect($select_node) {
+        $this->createCorrectOptions($select_node,1);
+        $number_incorrect = rand(2,5);
+        $this->createIncorrectOptions($select_node,$number_incorrect);
         return $this->item->saveXML();
     }
 
-    public function createMultiSelect($select) {
-            $numCorrect = rand(2,5);
-            $this->createCorrectOptions($select,$numCorrect);    
-            $numIncorrect = rand(1,5);
-            $this->createIncorrectOptions($select);
+    public function createMultiSelect($select_node) {
+            $number_correct = rand(2,5);
+            $this->createCorrectOptions($select_node,$number_correct);
+            $number_incorrect = rand(2,5);
+            $this->createIncorrectOptions($select_node,$number_incorrect);
             return $this->item->saveXML();
     }    
 
 
-    public function createCorrectOptions($select,$numCorrect) {
-        for ($i = 0; $i < $numCorrect; $i++) {
-            $correct_option = $this->item->createElementNS(CARS_NS,'cars:correct-option');
-            $correct_option->setAttribute('cgi',generateCGI());
-            // randomize minor attributes here
-            $correct_answer = $this->item->createElementNS(CARS_NS,'cars:answer',$this->faker->unique()->jobTitle);
-            $correct_option->appendChild($correct_answer);
-            $randFeedback = rand(1,10);
-            if ($randFeedback >= 6) {
-                $correct_feedback = $this->item->createElementNS(CARS_NS,'cars:feedback');
-                $correct_feedback_text =  $this->item->createElementNS(CARS_NS,'cars:paragraph',$this->faker->realText(50));
-                $correct_feedback->appendChild($correct_feedback_text);
-                $correct_option->appendChild($correct_feedback);
-            }
-            $select->appendChild($correct_option);
+    public function createCorrectOptions($select_node, $number_correct) {
+        for ($i = 0; $i < $number_correct; $i++) {
+            $correct_answer = $this->faker->unique()->jobTitle;
+            $correct_option_obj = new AnswerOption();
+            $correct_option_str= $correct_option_obj->createCorrectOption($correct_answer);
+            $correct_option_dom = new DOMDocument();
+            $correct_option_dom->loadXML($correct_option_str);
+            $correct_option_node = $correct_option_dom->getElementsByTagName("correct-option")->item(0);
+            $correct_option_node = $this->item->importNode($correct_option_node,true);
+            $select_node->appendChild($correct_option_node);
         }
     }
 
-    public function createIncorrectOptions($select) {
-        for ($j= 0; $j < 5; $j++) {
-            $incorrect_option = $this->item->createElementNS(CARS_NS,'cars:incorrect-option');
-            $incorrect_option->setAttribute('cgi',generateCGI());
-            // randomize minor attributes here
-            $incorrect_answer = $this->item->createElementNS(CARS_NS,'cars:answer',$this->faker->unique()->jobTitle);
-            $incorrect_option->appendChild($incorrect_answer);
-            $randFeedback = rand(1,10);
-            if ($randFeedback >= 6) {
-                $incorrect_feedback = $this->item->createElementNS(CARS_NS,'cars:feedback');
-                $incorrect_feedback_text =  $this->item->createElementNS(CARS_NS,'cars:paragraph',$this->faker->realText(50));
-                $incorrect_feedback->appendChild($incorrect_feedback_text);
-                $incorrect_option->appendChild($incorrect_feedback);
-            }
-            $select->appendChild($incorrect_option);
+    public function createIncorrectOptions($select_node, $number_incorrect) {
+        for ($j= 0; $j < $number_incorrect; $j++) {
+            $incorrect_answer = $this->faker->unique()->jobTitle;
+            $incorrect_option_obj = new AnswerOption();
+            $incorrect_option_str= $incorrect_option_obj->createIncorrectOption($incorrect_answer);
+            $incorrect_option_dom = new DOMDocument();
+            $incorrect_option_dom->loadXML($incorrect_option_str);
+            $incorrect_option_node = $incorrect_option_dom->getElementsByTagName("incorrect-option")->item(0);
+            $incorrect_option_node = $this->item->importNode($incorrect_option_node,true);
+            $select_node->appendChild($incorrect_option_node);
+
+//            $incorrect_option = $this->item->createElementNS(CARS_NS,'cars:incorrect-option');
+//            $incorrect_option->setAttribute('cgi',generateCGI());
+//            // randomize minor attributes here
+//            $incorrect_answer = $this->item->createElementNS(CARS_NS,'cars:answer',$this->faker->unique()->jobTitle);
+//            $incorrect_option->appendChild($incorrect_answer);
+//            $randFeedback = rand(1,10);
+//            if ($randFeedback >= 6) {
+//                $incorrect_feedback = $this->item->createElementNS(CARS_NS,'cars:feedback');
+//                $incorrect_feedback_text =  $this->item->createElementNS(CARS_NS,'cars:paragraph',$this->faker->realText(50));
+//                $incorrect_feedback->appendChild($incorrect_feedback_text);
+//                $incorrect_option->appendChild($incorrect_feedback);
+//            }
+//            $select->appendChild($incorrect_option);
         }
     }
 
